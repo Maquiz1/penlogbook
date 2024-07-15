@@ -225,7 +225,7 @@ if ($user->isLoggedIn()) {
                                     <h5 class="card-title">Reports <span>/Today</span></h5>
 
                                     <!-- Line Chart -->
-                                    <div id="reportsChart"></div>
+                                    <!-- <div id="reportsChart"></div> -->
 
                                     <script>
                                         document.addEventListener("DOMContentLoaded", () => {
