@@ -124,12 +124,12 @@ if ($user->isLoggedIn()) {
     <main id="main" class="main">
 
         <div class="pagetitle">
-            <h1><?= $override->getNews('category', 'status', 1, 'id', $_GET['disease'])[0]['name'] ?> Tables</h1>
+            <h1><?= $override->getNews('diseases', 'status', 1, 'id', $_GET['disease_id'])[0]['name'] ?> Tables</h1>
             <nav>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="index.php">Home</a></li>
                     <li class="breadcrumb-item">Tables</li>
-                    <li class="breadcrumb-item active"><?= $override->getNews('category', 'status', 1, 'id', $_GET['disease'])[0]['name'] ?></li>
+                    <li class="breadcrumb-item active"><?= $override->getNews('diseases', 'status', 1, 'id', $_GET['disease_id'])[0]['name'] ?></li>
                 </ol>
             </nav>
         </div><!-- End Page Title -->
@@ -167,56 +167,16 @@ if ($user->isLoggedIn()) {
                         <?php } ?>
 
                         <?php
-                        if ($_GET['disease']) {
-                            if ($user->data()->accessLevel == 1 || $user->data()->accessLevel == 3) {
-                                $pagNum = 0;
-                                $pagNum = $override->countData('mentorship', 'status', 1, 'disease', $_GET['disease']);
+                        $pagNum = 0;
+                        $pagNum = $override->countData2('mentorships', 'status', 1, 'disease_id', $_GET['disease_id'], 'create_id', $user->data()->id);
 
-                                $pages = ceil($pagNum / $numRec);
-                                if (!$_GET['page'] || $_GET['page'] == 1) {
-                                    $page = 0;
-                                } else {
-                                    $page = ($_GET['page'] * $numRec) - $numRec;
-                                }
-                                $data = $override->getWithLimit1('mentorship', 'status', 1, 'disease', $_GET['disease'], $page, $numRec);
-                            } else {
-                                $pagNum = 0;
-                                $pagNum = $override->countData2('mentorship', 'status', 1, 'disease', $_GET['disease'], 'mentor', $user->data()->id);
-
-                                $pages = ceil($pagNum / $numRec);
-                                if (!$_GET['page'] || $_GET['page'] == 1) {
-                                    $page = 0;
-                                } else {
-                                    $page = ($_GET['page'] * $numRec) - $numRec;
-                                }
-                                $data = $override->getWithLimit3('mentorship', 'status', 1, 'disease', $_GET['disease'], 'mentor', $user->data()->id, $page, $numRec);
-                            }
+                        $pages = ceil($pagNum / $numRec);
+                        if (!$_GET['page'] || $_GET['page'] == 1) {
+                            $page = 0;
                         } else {
-                            if ($user->data()->accessLevel == 1 || $user->data()->accessLevel == 3) {
-                                $pagNum = 0;
-                                $pagNum = $override->getCount('mentorship', 'status', 1);
-
-                                $pages = ceil($pagNum / $numRec);
-                                if (!$_GET['page'] || $_GET['page'] == 1) {
-                                    $page = 0;
-                                } else {
-                                    $page = ($_GET['page'] * $numRec) - $numRec;
-                                }
-                                $data = $override->getWithLimit('mentorship', 'status', 1, $page, $numRec);
-                            } else {
-                                $pagNum = 0;
-                                $pagNum = $override->getCount('mentorship', 'status', 1);
-
-                                $pages = ceil($pagNum / $numRec);
-                                if (!$_GET['page'] || $_GET['page'] == 1) {
-                                    $page = 0;
-                                } else {
-                                    $page = ($_GET['page'] * $numRec) - $numRec;
-                                }
-                                $data = $override->getWithLimit('mentorship', 'status', 1, $page, $numRec);
-                            }
+                            $page = ($_GET['page'] * $numRec) - $numRec;
                         }
-
+                        $data = $override->getWithLimit3('mentorships', 'status', 1, 'disease_id', $_GET['disease_id'], 'create_id', $user->data()->id, $page, $numRec);
                         ?>
                         <div class="card">
                             <div class="card-body">
@@ -227,7 +187,7 @@ if ($user->isLoggedIn()) {
                                     <thead>
                                         <tr>
                                             <th scope="col">#</th>
-                                            <th scope="col">Visit Date</th>
+                                            <th scope="col">Mentorship Date</th>
                                             <!-- <th scope="col">Mentee Name</th> -->
                                             <!-- <th scope="col">Menter Name</th> -->
                                             <!-- <th scope="col">PID</th> -->
@@ -240,15 +200,15 @@ if ($user->isLoggedIn()) {
                                         <?php
                                         $x = 1;
                                         foreach ($data as $value) {
-                                            $mentor = $override->getNews('user', 'status', 1, 'id', $value['mentor'])[0];
-                                            $mentee = $override->getNews('user', 'status', 1, 'id', $value['mentee'])[0];
+                                            // $mentor = $override->getNews('user', 'status', 1, 'id', $value['mentor'])[0];
+                                            // $mentee = $override->getNews('user', 'status', 1, 'id', $value['mentee'])[0];
                                             $site = $override->getNews('sites', 'status', 1, 'id', $value['site_id'])[0];
-                                            $disease = $override->getNews('category', 'status', 1, 'id', $value['disease'])[0];
+                                            $disease = $override->getNews('diseases', 'status', 1, 'id', $value['disease_id'])[0];
                                         ?>
                                             <tr>
                                                 <th scope="row"><?= $x; ?></th>
                                                 <td class="table-user">
-                                                    <?= $value['visit_date']; ?>
+                                                    <?= $value['mentorship_date']; ?>
                                                 </td>
                                                 <!-- <td class="table-user">
                                                     <?= $mentee['firstname'] . ' - ' . $mentee['lastname']; ?>
@@ -267,19 +227,19 @@ if ($user->isLoggedIn()) {
                                                 </td>
                                                 <td class="text-center">
                                                     <?php if ($user->data()->accessLevel == 1 || $user->data()->accessLevel == 2) { ?>
-                                                        <a href="add.php?&id=1&mentorship_id=<?= $value['id'] ?>&disease=<?= $value['disease'] ?>" class="btn btn-info">Update</a>
+                                                        <a href="add.php?&id=1&mentorship_id=<?= $value['id'] ?>&disease_id=<?= $value['disease_id'] ?>" class="btn btn-info">Update</a>
                                                     <?php } ?>
 
                                                     <!-- <?php if ($user->data()->accessLevel == 1 || $user->data()->accessLevel == 2 || $user->data()->accessLevel == 3) { ?>
-                                                        <a href="add.php?&id=1&mentorship_id=<?= $value['id'] ?>&disease=<?= $value['disease'] ?>" class="btn btn-success">View</a>
+                                                        <a href="add.php?&id=1&mentorship_id=<?= $value['id'] ?>&disease=<?= $value['disease_id'] ?>" class="btn btn-success">View</a>
                                                     <?php } ?> -->
 
                                                     <?php if ($user->data()->accessLevel == 1 || $user->data()->accessLevel == 2 || $user->data()->accessLevel == 3) { ?>
-                                                        <a href="add.php?&id=2&mentorship_id=<?= $value['id'] ?>&disease=<?= $value['disease'] ?>" class="btn btn-secondary">Add New Assessments</a>
+                                                        <a href="add.php?&id=2&mentorship_id=<?= $value['id'] ?>&disease_id=<?= $value['disease_id'] ?>" class="btn btn-secondary">Add New Assessments</a>
                                                     <?php } ?>
 
                                                     <?php if ($user->data()->accessLevel == 1 || $user->data()->accessLevel == 2 || $user->data()->accessLevel == 3) { ?>
-                                                        <a href="info.php?&id=2&mentorship_id=<?= $value['id'] ?>&disease=<?= $value['disease'] ?>" class="btn btn-primary">Viw Assessments</a>
+                                                        <a href="info.php?&id=2&mentorship_id=<?= $value['id'] ?>&disease_id=<?= $value['disease_id'] ?>" class="btn btn-primary">Viw Assessments</a>
                                                     <?php } ?>
 
                                                     <?php if ($user->data()->accessLevel == 1 || $user->data()->accessLevel == 2) { ?>

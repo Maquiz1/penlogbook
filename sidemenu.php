@@ -183,13 +183,14 @@ $users = $override->getData('user');
 
         <li class="nav-item">
             <a class="nav-link collapsed" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
-                <i class="bi bi-journal-text"></i><span>Forms</span><i class="bi bi-chevron-down ms-auto"></i>
+                <i class="bi bi-journal-text"></i><span>Add Mentorships</span><i class="bi bi-chevron-down ms-auto"></i>
             </a>
             <ul id="forms-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
                 <?php foreach ($override->get('diseases', 'status', 1) as $value) {
-                    // $mentor = $override->getNews('user', 'status', 1, 'id', $value['mentor'])[0]; ?>
+                    // $mentor = $override->getNews('user', 'status', 1, 'id', $value['mentor'])[0]; 
+                ?>
                     <li>
-                        <a href="add.php?id=1&disease=<?= $value['id'] ?>">
+                        <a href="add.php?id=1&disease_id=<?= $value['id'] ?>">
                             <i class="bi bi-circle"></i><span>Add <?= $value['name'] ?> Forms</span>
                         </a>
                     </li>
@@ -219,18 +220,19 @@ $users = $override->getData('user');
 
         <li class="nav-item">
             <a class="nav-link collapsed" data-bs-target="#tables-nav" data-bs-toggle="collapse" href="#">
-                <i class="bi bi-layout-text-window-reverse"></i><span>Tables</span><i class="bi bi-chevron-down ms-auto"></i>
+                <i class="bi bi-layout-text-window-reverse"></i><span>View Mentorships</span><i class="bi bi-chevron-down ms-auto"></i>
             </a>
             <ul id="tables-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-                <li>
+                <!-- <li>
                     <a href="info.php?id=1">
                         <i class="bi bi-circle"></i><span>All Tables</span>
                     </a>
-                </li>
+                </li> -->
                 <?php foreach ($override->get('diseases', 'status', 1) as $value) {
-                    $mentor = $override->getNews('user', 'status', 1, 'id', $value['mentor'])[0]; ?>
+                    // $mentor = $override->getNews('user', 'status', 1, 'id', $value['mentor'])[0]; 
+                ?>
                     <li>
-                        <a href="info.php?id=1&disease=<?= $value['id'] ?>">
+                        <a href="info.php?id=1&disease_id=<?= $value['id'] ?>">
                             <i class="bi bi-circle"></i><span><?= $value['name'] ?> Table</span>
                         </a>
                     </li>
