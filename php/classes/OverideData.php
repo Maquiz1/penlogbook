@@ -62,6 +62,41 @@ class OverideData
         return $num;
     }
 
+    // public function getCount1($table, $field, $value, $where2, $id2)
+    // {
+    //     $query = $this->_pdo->query("SELECT * FROM $table WHERE $field <= '$value' AND $where2 = '$id2'");
+    //     $num = $query->rowCount();
+    //     return $num;
+    // }
+
+    public function getCount2($table, $field, $value, $where2, $id2)
+    {
+        $query = $this->_pdo->query("SELECT * FROM $table WHERE $field <= '$value' AND $where2 = '$id2'");
+        $num = $query->rowCount();
+        return $num;
+    }
+
+    public function getCount3($table, $where2, $id2)
+    {
+        $query = $this->_pdo->query("SELECT * FROM $table WHERE notify_amount >= quantity AND $where2 = '$id2'");
+        $num = $query->rowCount();
+        return $num;
+    }
+
+    public function getCount4($table, $where2, $id2)
+    {
+        $query = $this->_pdo->query("SELECT * FROM $table WHERE notify_amount >= quantity AND $where2 = '$id2'");
+        $num = $query->rowCount();
+        return $num;
+    }
+
+    public function getCount5($table, $where2, $id2, $where3, $id3)
+    {
+        $query = $this->_pdo->query("SELECT * FROM $table WHERE notify_amount >= quantity AND $where2 = '$id2' AND $where3 = '$id3'");
+        $num = $query->rowCount();
+        return $num;
+    }
+
     public function countData($table, $field, $value, $field1, $value1)
     {
         $query = $this->_pdo->query("SELECT * FROM $table WHERE $field = '$value' AND $field1 = '$value1'");
@@ -151,7 +186,7 @@ class OverideData
         return $result;
     }
 
-        public function getNews1($table, $where, $id, $where2, $id2, $where3, $id3)
+    public function getNews1($table, $where, $id, $where2, $id2, $where3, $id3)
     {
         $query = $this->_pdo->query("SELECT * FROM $table WHERE $where = '$id' AND $where2 = '$id2' AND $where3 = '$id3'");
         $result = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -793,5 +828,583 @@ class OverideData
         $query = $this->_pdo->query("SELECT * FROM $table WHERE ($where3 LIKE '%$searchTerm%' OR $where4 LIKE '%$searchTerm%' OR $where5 LIKE '%$searchTerm%' OR $where6 LIKE '%$searchTerm%') limit $page,$numRec");
         $result = $query->fetchAll(PDO::FETCH_ASSOC);
         return $result;
+    }
+
+    public function ListByMonth($table, $where1)
+    {
+        $query = $this->_pdo->query("SELECT DATE_FORMAT($where1, '%Y-%m') as month, COUNT(*) as count
+        FROM $table
+        GROUP BY DATE_FORMAT($where1, '%Y-%m')");
+        $result = $query->fetchAll(PDO::FETCH_ASSOC);
+        return $result;
+    }
+
+    public function CountByMonth($table, $where1)
+    {
+        $query = $this->_pdo->query("SELECT DATE_FORMAT($where1, '%Y-%m') as month, COUNT(*) as count
+        FROM $table
+        GROUP BY DATE_FORMAT($where1, '%Y-%m')");
+        $num = $query->rowCount();
+        return $num;
+    }
+
+    public function ListByMonthAllTables($table1, $table2, $table3, $table4, $table5, $table6, $table7, $table8, $table9, $where1)
+    {
+        $query = $this->_pdo->query("SELECT 
+                COALESCE(
+                    DATE_FORMAT(t1.$where1, '%Y-%m'),
+                    DATE_FORMAT(t2.$where1, '%Y-%m'),
+                    DATE_FORMAT(t3.$where1, '%Y-%m'),
+                    DATE_FORMAT(t4.$where1, '%Y-%m'),
+                    DATE_FORMAT(t5.$where1, '%Y-%m'),
+                    DATE_FORMAT(t6.$where1, '%Y-%m'),
+                    DATE_FORMAT(t7.$where1, '%Y-%m'),
+                    DATE_FORMAT(t8.$where1, '%Y-%m'),
+                    DATE_FORMAT(t9.$where1, '%Y-%m')
+                ) as month,
+                COUNT(DISTINCT t1.$where1) as count1,
+                COUNT(DISTINCT t2.$where1) as count2,
+                COUNT(DISTINCT t3.$where1) as count3,
+                COUNT(DISTINCT t4.$where1) as count4,
+                COUNT(DISTINCT t5.$where1) as count5,
+                COUNT(DISTINCT t6.$where1) as count6,
+                COUNT(DISTINCT t7.$where1) as count7,
+                COUNT(DISTINCT t8.$where1) as count8,
+                COUNT(DISTINCT t9.$where1) as count9
+            FROM 
+                $table1 t1
+            LEFT JOIN 
+                $table2 t2 ON DATE_FORMAT(t1.$where1, '%Y-%m') = DATE_FORMAT(t2.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table3 t3 ON DATE_FORMAT(t1.$where1, '%Y-%m') = DATE_FORMAT(t3.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table4 t4 ON DATE_FORMAT(t1.$where1, '%Y-%m') = DATE_FORMAT(t4.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table5 t5 ON DATE_FORMAT(t1.$where1, '%Y-%m') = DATE_FORMAT(t5.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table6 t6 ON DATE_FORMAT(t1.$where1, '%Y-%m') = DATE_FORMAT(t6.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table7 t7 ON DATE_FORMAT(t1.$where1, '%Y-%m') = DATE_FORMAT(t7.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table8 t8 ON DATE_FORMAT(t1.$where1, '%Y-%m') = DATE_FORMAT(t8.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table9 t9 ON DATE_FORMAT(t1.$where1, '%Y-%m') = DATE_FORMAT(t9.$where1, '%Y-%m')
+            GROUP BY 
+                COALESCE(
+                    DATE_FORMAT(t1.$where1, '%Y-%m'),
+                    DATE_FORMAT(t2.$where1, '%Y-%m'),
+                    DATE_FORMAT(t3.$where1, '%Y-%m'),
+                    DATE_FORMAT(t4.$where1, '%Y-%m'),
+                    DATE_FORMAT(t5.$where1, '%Y-%m'),
+                    DATE_FORMAT(t6.$where1, '%Y-%m'),
+                    DATE_FORMAT(t7.$where1, '%Y-%m'),
+                    DATE_FORMAT(t8.$where1, '%Y-%m'),
+                    DATE_FORMAT(t9.$where1, '%Y-%m')
+                )
+            UNION
+            SELECT 
+                COALESCE(
+                    DATE_FORMAT(t1.$where1, '%Y-%m'),
+                    DATE_FORMAT(t2.$where1, '%Y-%m'),
+                    DATE_FORMAT(t3.$where1, '%Y-%m'),
+                    DATE_FORMAT(t4.$where1, '%Y-%m'),
+                    DATE_FORMAT(t5.$where1, '%Y-%m'),
+                    DATE_FORMAT(t6.$where1, '%Y-%m'),
+                    DATE_FORMAT(t7.$where1, '%Y-%m'),
+                    DATE_FORMAT(t8.$where1, '%Y-%m'),
+                    DATE_FORMAT(t9.$where1, '%Y-%m')
+                ) as month,
+                COUNT(DISTINCT t1.$where1) as count1,
+                COUNT(DISTINCT t2.$where1) as count2,
+                COUNT(DISTINCT t3.$where1) as count3,
+                COUNT(DISTINCT t4.$where1) as count4,
+                COUNT(DISTINCT t5.$where1) as count5,
+                COUNT(DISTINCT t6.$where1) as count6,
+                COUNT(DISTINCT t7.$where1) as count7,
+                COUNT(DISTINCT t8.$where1) as count8,
+                COUNT(DISTINCT t9.$where1) as count9
+            FROM 
+                $table2 t2
+            LEFT JOIN 
+                $table1 t1 ON DATE_FORMAT(t2.$where1, '%Y-%m') = DATE_FORMAT(t1.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table3 t3 ON DATE_FORMAT(t2.$where1, '%Y-%m') = DATE_FORMAT(t3.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table4 t4 ON DATE_FORMAT(t2.$where1, '%Y-%m') = DATE_FORMAT(t4.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table5 t5 ON DATE_FORMAT(t2.$where1, '%Y-%m') = DATE_FORMAT(t5.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table6 t6 ON DATE_FORMAT(t2.$where1, '%Y-%m') = DATE_FORMAT(t6.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table7 t7 ON DATE_FORMAT(t2.$where1, '%Y-%m') = DATE_FORMAT(t7.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table8 t8 ON DATE_FORMAT(t2.$where1, '%Y-%m') = DATE_FORMAT(t8.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table9 t9 ON DATE_FORMAT(t2.$where1, '%Y-%m') = DATE_FORMAT(t9.$where1, '%Y-%m')
+            GROUP BY 
+                COALESCE(
+                    DATE_FORMAT(t1.$where1, '%Y-%m'),
+                    DATE_FORMAT(t2.$where1, '%Y-%m'),
+                    DATE_FORMAT(t3.$where1, '%Y-%m'),
+                    DATE_FORMAT(t4.$where1, '%Y-%m'),
+                    DATE_FORMAT(t5.$where1, '%Y-%m'),
+                    DATE_FORMAT(t6.$where1, '%Y-%m'),
+                    DATE_FORMAT(t7.$where1, '%Y-%m'),
+                    DATE_FORMAT(t8.$where1, '%Y-%m'),
+                    DATE_FORMAT(t9.$where1, '%Y-%m')
+                )
+            UNION
+            SELECT 
+                COALESCE(
+                    DATE_FORMAT(t1.$where1, '%Y-%m'),
+                    DATE_FORMAT(t2.$where1, '%Y-%m'),
+                    DATE_FORMAT(t3.$where1, '%Y-%m'),
+                    DATE_FORMAT(t4.$where1, '%Y-%m'),
+                    DATE_FORMAT(t5.$where1, '%Y-%m'),
+                    DATE_FORMAT(t6.$where1, '%Y-%m'),
+                    DATE_FORMAT(t7.$where1, '%Y-%m'),
+                    DATE_FORMAT(t8.$where1, '%Y-%m'),
+                    DATE_FORMAT(t9.$where1, '%Y-%m')
+                ) as month,
+                COUNT(DISTINCT t1.$where1) as count1,
+                COUNT(DISTINCT t2.$where1) as count2,
+                COUNT(DISTINCT t3.$where1) as count3,
+                COUNT(DISTINCT t4.$where1) as count4,
+                COUNT(DISTINCT t5.$where1) as count5,
+                COUNT(DISTINCT t6.$where1) as count6,
+                COUNT(DISTINCT t7.$where1) as count7,
+                COUNT(DISTINCT t8.$where1) as count8,
+                COUNT(DISTINCT t9.$where1) as count9
+            FROM 
+                $table3 t3
+            LEFT JOIN 
+                $table1 t1 ON DATE_FORMAT(t3.$where1, '%Y-%m') = DATE_FORMAT(t1.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table2 t2 ON DATE_FORMAT(t3.$where1, '%Y-%m') = DATE_FORMAT(t2.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table4 t4 ON DATE_FORMAT(t3.$where1, '%Y-%m') = DATE_FORMAT(t4.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table5 t5 ON DATE_FORMAT(t3.$where1, '%Y-%m') = DATE_FORMAT(t5.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table6 t6 ON DATE_FORMAT(t3.$where1, '%Y-%m') = DATE_FORMAT(t6.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table7 t7 ON DATE_FORMAT(t3.$where1, '%Y-%m') = DATE_FORMAT(t7.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table8 t8 ON DATE_FORMAT(t3.$where1, '%Y-%m') = DATE_FORMAT(t8.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table9 t9 ON DATE_FORMAT(t3.$where1, '%Y-%m') = DATE_FORMAT(t9.$where1, '%Y-%m')
+            GROUP BY 
+                COALESCE(
+                    DATE_FORMAT(t1.$where1, '%Y-%m'),
+                    DATE_FORMAT(t2.$where1, '%Y-%m'),
+                    DATE_FORMAT(t3.$where1, '%Y-%m'),
+                    DATE_FORMAT(t4.$where1, '%Y-%m'),
+                    DATE_FORMAT(t5.$where1, '%Y-%m'),
+                    DATE_FORMAT(t6.$where1, '%Y-%m'),
+                    DATE_FORMAT(t7.$where1, '%Y-%m'),
+                    DATE_FORMAT(t8.$where1, '%Y-%m'),
+                    DATE_FORMAT(t9.$where1, '%Y-%m')
+                )
+            UNION
+            SELECT 
+                COALESCE(
+                    DATE_FORMAT(t1.$where1, '%Y-%m'),
+                    DATE_FORMAT(t2.$where1, '%Y-%m'),
+                    DATE_FORMAT(t3.$where1, '%Y-%m'),
+                    DATE_FORMAT(t4.$where1, '%Y-%m'),
+                    DATE_FORMAT(t5.$where1, '%Y-%m'),
+                    DATE_FORMAT(t6.$where1, '%Y-%m'),
+                    DATE_FORMAT(t7.$where1, '%Y-%m'),
+                    DATE_FORMAT(t8.$where1, '%Y-%m'),
+                    DATE_FORMAT(t9.$where1, '%Y-%m')
+                ) as month,
+                COUNT(DISTINCT t1.$where1) as count1,
+                COUNT(DISTINCT t2.$where1) as count2,
+                COUNT(DISTINCT t3.$where1) as count3,
+                COUNT(DISTINCT t4.$where1) as count4,
+                COUNT(DISTINCT t5.$where1) as count5,
+                COUNT(DISTINCT t6.$where1) as count6,
+                COUNT(DISTINCT t7.$where1) as count7,
+                COUNT(DISTINCT t8.$where1) as count8,
+                COUNT(DISTINCT t9.$where1) as count9
+            FROM 
+                $table4 t4
+            LEFT JOIN 
+                $table1 t1 ON DATE_FORMAT(t4.$where1, '%Y-%m') = DATE_FORMAT(t1.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table2 t2 ON DATE_FORMAT(t4.$where1, '%Y-%m') = DATE_FORMAT(t2.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table3 t3 ON DATE_FORMAT(t4.$where1, '%Y-%m') = DATE_FORMAT(t3.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table5 t5 ON DATE_FORMAT(t4.$where1, '%Y-%m') = DATE_FORMAT(t5.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table6 t6 ON DATE_FORMAT(t4.$where1, '%Y-%m') = DATE_FORMAT(t6.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table7 t7 ON DATE_FORMAT(t4.$where1, '%Y-%m') = DATE_FORMAT(t7.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table8 t8 ON DATE_FORMAT(t4.$where1, '%Y-%m') = DATE_FORMAT(t8.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table9 t9 ON DATE_FORMAT(t4.$where1, '%Y-%m') = DATE_FORMAT(t9.$where1, '%Y-%m')
+            GROUP BY 
+                COALESCE(
+                    DATE_FORMAT(t1.$where1, '%Y-%m'),
+                    DATE_FORMAT(t2.$where1, '%Y-%m'),
+                    DATE_FORMAT(t3.$where1, '%Y-%m'),
+                    DATE_FORMAT(t4.$where1, '%Y-%m'),
+                    DATE_FORMAT(t5.$where1, '%Y-%m'),
+                    DATE_FORMAT(t6.$where1, '%Y-%m'),
+                    DATE_FORMAT(t7.$where1, '%Y-%m'),
+                    DATE_FORMAT(t8.$where1, '%Y-%m'),
+                    DATE_FORMAT(t9.$where1, '%Y-%m')
+                )
+            UNION
+            SELECT 
+                COALESCE(
+                    DATE_FORMAT(t1.$where1, '%Y-%m'),
+                    DATE_FORMAT(t2.$where1, '%Y-%m'),
+                    DATE_FORMAT(t3.$where1, '%Y-%m'),
+                    DATE_FORMAT(t4.$where1, '%Y-%m'),
+                    DATE_FORMAT(t5.$where1, '%Y-%m'),
+                    DATE_FORMAT(t6.$where1, '%Y-%m'),
+                    DATE_FORMAT(t7.$where1, '%Y-%m'),
+                    DATE_FORMAT(t8.$where1, '%Y-%m'),
+                    DATE_FORMAT(t9.$where1, '%Y-%m')
+                ) as month,
+                COUNT(DISTINCT t1.$where1) as count1,
+                COUNT(DISTINCT t2.$where1) as count2,
+                COUNT(DISTINCT t3.$where1) as count3,
+                COUNT(DISTINCT t4.$where1) as count4,
+                COUNT(DISTINCT t5.$where1) as count5,
+                COUNT(DISTINCT t6.$where1) as count6,
+                COUNT(DISTINCT t7.$where1) as count7,
+                COUNT(DISTINCT t8.$where1) as count8,
+                COUNT(DISTINCT t9.$where1) as count9
+            FROM 
+                $table5 t5
+            LEFT JOIN 
+                $table1 t1 ON DATE_FORMAT(t5.$where1, '%Y-%m') = DATE_FORMAT(t1.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table2 t2 ON DATE_FORMAT(t5.$where1, '%Y-%m') = DATE_FORMAT(t2.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table3 t3 ON DATE_FORMAT(t5.$where1, '%Y-%m') = DATE_FORMAT(t3.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table4 t4 ON DATE_FORMAT(t5.$where1, '%Y-%m') = DATE_FORMAT(t4.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table6 t6 ON DATE_FORMAT(t5.$where1, '%Y-%m') = DATE_FORMAT(t6.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table7 t7 ON DATE_FORMAT(t5.$where1, '%Y-%m') = DATE_FORMAT(t7.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table8 t8 ON DATE_FORMAT(t5.$where1, '%Y-%m') = DATE_FORMAT(t8.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table9 t9 ON DATE_FORMAT(t5.$where1, '%Y-%m') = DATE_FORMAT(t9.$where1, '%Y-%m')
+            GROUP BY 
+                COALESCE(
+                    DATE_FORMAT(t1.$where1, '%Y-%m'),
+                    DATE_FORMAT(t2.$where1, '%Y-%m'),
+                    DATE_FORMAT(t3.$where1, '%Y-%m'),
+                    DATE_FORMAT(t4.$where1, '%Y-%m'),
+                    DATE_FORMAT(t5.$where1, '%Y-%m'),
+                    DATE_FORMAT(t6.$where1, '%Y-%m'),
+                    DATE_FORMAT(t7.$where1, '%Y-%m'),
+                    DATE_FORMAT(t8.$where1, '%Y-%m'),
+                    DATE_FORMAT(t9.$where1, '%Y-%m')
+                )
+            UNION
+            SELECT 
+                COALESCE(
+                    DATE_FORMAT(t1.$where1, '%Y-%m'),
+                    DATE_FORMAT(t2.$where1, '%Y-%m'),
+                    DATE_FORMAT(t3.$where1, '%Y-%m'),
+                    DATE_FORMAT(t4.$where1, '%Y-%m'),
+                    DATE_FORMAT(t5.$where1, '%Y-%m'),
+                    DATE_FORMAT(t6.$where1, '%Y-%m'),
+                    DATE_FORMAT(t7.$where1, '%Y-%m'),
+                    DATE_FORMAT(t8.$where1, '%Y-%m'),
+                    DATE_FORMAT(t9.$where1, '%Y-%m')
+                ) as month,
+                COUNT(DISTINCT t1.$where1) as count1,
+                COUNT(DISTINCT t2.$where1) as count2,
+                COUNT(DISTINCT t3.$where1) as count3,
+                COUNT(DISTINCT t4.$where1) as count4,
+                COUNT(DISTINCT t5.$where1) as count5,
+                COUNT(DISTINCT t6.$where1) as count6,
+                COUNT(DISTINCT t7.$where1) as count7,
+                COUNT(DISTINCT t8.$where1) as count8,
+                COUNT(DISTINCT t9.$where1) as count9
+            FROM 
+                $table6 t6
+            LEFT JOIN 
+                $table1 t1 ON DATE_FORMAT(t6.$where1, '%Y-%m') = DATE_FORMAT(t1.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table2 t2 ON DATE_FORMAT(t6.$where1, '%Y-%m') = DATE_FORMAT(t2.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table3 t3 ON DATE_FORMAT(t6.$where1, '%Y-%m') = DATE_FORMAT(t3.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table4 t4 ON DATE_FORMAT(t6.$where1, '%Y-%m') = DATE_FORMAT(t4.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table5 t5 ON DATE_FORMAT(t6.$where1, '%Y-%m') = DATE_FORMAT(t5.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table7 t7 ON DATE_FORMAT(t6.$where1, '%Y-%m') = DATE_FORMAT(t7.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table8 t8 ON DATE_FORMAT(t6.$where1, '%Y-%m') = DATE_FORMAT(t8.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table9 t9 ON DATE_FORMAT(t6.$where1, '%Y-%m') = DATE_FORMAT(t9.$where1, '%Y-%m')
+            GROUP BY 
+                COALESCE(
+                    DATE_FORMAT(t1.$where1, '%Y-%m'),
+                    DATE_FORMAT(t2.$where1, '%Y-%m'),
+                    DATE_FORMAT(t3.$where1, '%Y-%m'),
+                    DATE_FORMAT(t4.$where1, '%Y-%m'),
+                    DATE_FORMAT(t5.$where1, '%Y-%m'),
+                    DATE_FORMAT(t6.$where1, '%Y-%m'),
+                    DATE_FORMAT(t7.$where1, '%Y-%m'),
+                    DATE_FORMAT(t8.$where1, '%Y-%m'),
+                    DATE_FORMAT(t9.$where1, '%Y-%m')
+                )
+            UNION
+            SELECT 
+                COALESCE(
+                    DATE_FORMAT(t1.$where1, '%Y-%m'),
+                    DATE_FORMAT(t2.$where1, '%Y-%m'),
+                    DATE_FORMAT(t3.$where1, '%Y-%m'),
+                    DATE_FORMAT(t4.$where1, '%Y-%m'),
+                    DATE_FORMAT(t5.$where1, '%Y-%m'),
+                    DATE_FORMAT(t6.$where1, '%Y-%m'),
+                    DATE_FORMAT(t7.$where1, '%Y-%m'),
+                    DATE_FORMAT(t8.$where1, '%Y-%m'),
+                    DATE_FORMAT(t9.$where1, '%Y-%m')
+                ) as month,
+                COUNT(DISTINCT t1.$where1) as count1,
+                COUNT(DISTINCT t2.$where1) as count2,
+                COUNT(DISTINCT t3.$where1) as count3,
+                COUNT(DISTINCT t4.$where1) as count4,
+                COUNT(DISTINCT t5.$where1) as count5,
+                COUNT(DISTINCT t6.$where1) as count6,
+                COUNT(DISTINCT t7.$where1) as count7,
+                COUNT(DISTINCT t8.$where1) as count8,
+                COUNT(DISTINCT t9.$where1) as count9
+            FROM 
+                $table7 t7
+            LEFT JOIN 
+                $table1 t1 ON DATE_FORMAT(t7.$where1, '%Y-%m') = DATE_FORMAT(t1.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table2 t2 ON DATE_FORMAT(t7.$where1, '%Y-%m') = DATE_FORMAT(t2.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table3 t3 ON DATE_FORMAT(t7.$where1, '%Y-%m') = DATE_FORMAT(t3.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table4 t4 ON DATE_FORMAT(t7.$where1, '%Y-%m') = DATE_FORMAT(t4.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table5 t5 ON DATE_FORMAT(t7.$where1, '%Y-%m') = DATE_FORMAT(t5.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table6 t6 ON DATE_FORMAT(t7.$where1, '%Y-%m') = DATE_FORMAT(t6.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table8 t8 ON DATE_FORMAT(t7.$where1, '%Y-%m') = DATE_FORMAT(t8.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table9 t9 ON DATE_FORMAT(t7.$where1, '%Y-%m') = DATE_FORMAT(t9.$where1, '%Y-%m')
+            GROUP BY 
+                COALESCE(
+                    DATE_FORMAT(t1.$where1, '%Y-%m'),
+                    DATE_FORMAT(t2.$where1, '%Y-%m'),
+                    DATE_FORMAT(t3.$where1, '%Y-%m'),
+                    DATE_FORMAT(t4.$where1, '%Y-%m'),
+                    DATE_FORMAT(t5.$where1, '%Y-%m'),
+                    DATE_FORMAT(t6.$where1, '%Y-%m'),
+                    DATE_FORMAT(t7.$where1, '%Y-%m'),
+                    DATE_FORMAT(t8.$where1, '%Y-%m'),
+                    DATE_FORMAT(t9.$where1, '%Y-%m')
+                )
+            UNION
+            SELECT 
+                COALESCE(
+                    DATE_FORMAT(t1.$where1, '%Y-%m'),
+                    DATE_FORMAT(t2.$where1, '%Y-%m'),
+                    DATE_FORMAT(t3.$where1, '%Y-%m'),
+                    DATE_FORMAT(t4.$where1, '%Y-%m'),
+                    DATE_FORMAT(t5.$where1, '%Y-%m'),
+                    DATE_FORMAT(t6.$where1, '%Y-%m'),
+                    DATE_FORMAT(t7.$where1, '%Y-%m'),
+                    DATE_FORMAT(t8.$where1, '%Y-%m'),
+                    DATE_FORMAT(t9.$where1, '%Y-%m')
+                ) as month,
+                COUNT(DISTINCT t1.$where1) as count1,
+                COUNT(DISTINCT t2.$where1) as count2,
+                COUNT(DISTINCT t3.$where1) as count3,
+                COUNT(DISTINCT t4.$where1) as count4,
+                COUNT(DISTINCT t5.$where1) as count5,
+                COUNT(DISTINCT t6.$where1) as count6,
+                COUNT(DISTINCT t7.$where1) as count7,
+                COUNT(DISTINCT t8.$where1) as count8,
+                COUNT(DISTINCT t9.$where1) as count9
+            FROM 
+                $table8 t8
+            LEFT JOIN 
+                $table1 t1 ON DATE_FORMAT(t8.$where1, '%Y-%m') = DATE_FORMAT(t1.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table2 t2 ON DATE_FORMAT(t8.$where1, '%Y-%m') = DATE_FORMAT(t2.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table3 t3 ON DATE_FORMAT(t8.$where1, '%Y-%m') = DATE_FORMAT(t3.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table4 t4 ON DATE_FORMAT(t8.$where1, '%Y-%m') = DATE_FORMAT(t4.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table5 t5 ON DATE_FORMAT(t8.$where1, '%Y-%m') = DATE_FORMAT(t5.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table6 t6 ON DATE_FORMAT(t8.$where1, '%Y-%m') = DATE_FORMAT(t6.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table7 t7 ON DATE_FORMAT(t8.$where1, '%Y-%m') = DATE_FORMAT(t7.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table9 t9 ON DATE_FORMAT(t8.$where1, '%Y-%m') = DATE_FORMAT(t9.$where1, '%Y-%m')
+            GROUP BY 
+                COALESCE(
+                    DATE_FORMAT(t1.$where1, '%Y-%m'),
+                    DATE_FORMAT(t2.$where1, '%Y-%m'),
+                    DATE_FORMAT(t3.$where1, '%Y-%m'),
+                    DATE_FORMAT(t4.$where1, '%Y-%m'),
+                    DATE_FORMAT(t5.$where1, '%Y-%m'),
+                    DATE_FORMAT(t6.$where1, '%Y-%m'),
+                    DATE_FORMAT(t7.$where1, '%Y-%m'),
+                    DATE_FORMAT(t8.$where1, '%Y-%m'),
+                    DATE_FORMAT(t9.$where1, '%Y-%m')
+                )
+            UNION
+            SELECT 
+                COALESCE(
+                    DATE_FORMAT(t1.$where1, '%Y-%m'),
+                    DATE_FORMAT(t2.$where1, '%Y-%m'),
+                    DATE_FORMAT(t3.$where1, '%Y-%m'),
+                    DATE_FORMAT(t4.$where1, '%Y-%m'),
+                    DATE_FORMAT(t5.$where1, '%Y-%m'),
+                    DATE_FORMAT(t6.$where1, '%Y-%m'),
+                    DATE_FORMAT(t7.$where1, '%Y-%m'),
+                    DATE_FORMAT(t8.$where1, '%Y-%m'),
+                    DATE_FORMAT(t9.$where1, '%Y-%m')
+                ) as month,
+                COUNT(DISTINCT t1.$where1) as count1,
+                COUNT(DISTINCT t2.$where1) as count2,
+                COUNT(DISTINCT t3.$where1) as count3,
+                COUNT(DISTINCT t4.$where1) as count4,
+                COUNT(DISTINCT t5.$where1) as count5,
+                COUNT(DISTINCT t6.$where1) as count6,
+                COUNT(DISTINCT t7.$where1) as count7,
+                COUNT(DISTINCT t8.$where1) as count8,
+                COUNT(DISTINCT t9.$where1) as count9
+            FROM 
+                $table9 t9
+            LEFT JOIN 
+                $table1 t1 ON DATE_FORMAT(t9.$where1, '%Y-%m') = DATE_FORMAT(t1.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table2 t2 ON DATE_FORMAT(t9.$where1, '%Y-%m') = DATE_FORMAT(t2.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table3 t3 ON DATE_FORMAT(t9.$where1, '%Y-%m') = DATE_FORMAT(t3.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table4 t4 ON DATE_FORMAT(t9.$where1, '%Y-%m') = DATE_FORMAT(t4.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table5 t5 ON DATE_FORMAT(t9.$where1, '%Y-%m') = DATE_FORMAT(t5.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table6 t6 ON DATE_FORMAT(t9.$where1, '%Y-%m') = DATE_FORMAT(t6.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table7 t7 ON DATE_FORMAT(t9.$where1, '%Y-%m') = DATE_FORMAT(t7.$where1, '%Y-%m')
+            LEFT JOIN 
+                $table8 t8 ON DATE_FORMAT(t9.$where1, '%Y-%m') = DATE_FORMAT(t8.$where1, '%Y-%m')
+            GROUP BY 
+                COALESCE(
+                    DATE_FORMAT(t1.$where1, '%Y-%m'),
+                    DATE_FORMAT(t2.$where1, '%Y-%m'),
+                    DATE_FORMAT(t3.$where1, '%Y-%m'),
+                    DATE_FORMAT(t4.$where1, '%Y-%m'),
+                    DATE_FORMAT(t5.$where1, '%Y-%m'),
+                    DATE_FORMAT(t6.$where1, '%Y-%m'),
+                    DATE_FORMAT(t7.$where1, '%Y-%m'),
+                    DATE_FORMAT(t8.$where1, '%Y-%m'),
+                    DATE_FORMAT(t9.$where1, '%Y-%m')
+                )
+            ORDER BY month");
+        $result = $query->fetchAll(PDO::FETCH_ASSOC);
+        return $result;
+    }
+
+    public function ListByMonths($table, $where, $where1)
+    {
+        $query = $this->_pdo->query("SELECT
+                calendar.month,
+                sites.$where,
+                COALESCE(COUNT($table.id), 0) AS count
+            FROM
+                (SELECT DISTINCT DATE_FORMAT($where1, '%Y-%m') AS month FROM $table) AS calendar
+            CROSS JOIN
+                (SELECT DISTINCT $where FROM $table) AS sites
+            LEFT JOIN
+                $table
+            ON
+                DATE_FORMAT($table.$where1, '%Y-%m') = calendar.month
+                AND $table.$where = sites.$where
+            GROUP BY
+                calendar.month, sites.$where
+            ORDER BY
+                calendar.month ASC, sites.$where ASC");
+        $result = $query->fetchAll(PDO::FETCH_ASSOC);
+        return $result;
+    }
+
+    public function ListByMonthsMentee($table, $where, $where1, $where2, $where3, $where4, $where5)
+    {
+        $query = $this->_pdo->query("SELECT
+                calendar.month,
+                sites.$where,
+                COALESCE(COUNT($table.id), 0) AS count
+            FROM
+                (SELECT DISTINCT DATE_FORMAT($where1, '%Y-%m') AS month FROM $table) AS calendar
+            CROSS JOIN
+                (SELECT DISTINCT $where FROM $table) AS sites
+            LEFT JOIN
+                $table
+            ON
+                DATE_FORMAT($table.$where1, '%Y-%m') = calendar.month
+                AND $table.$where = sites.$where
+            WHERE
+                $where2 = '$where3' AND $where4 = '$where5'
+            GROUP BY
+                calendar.month, sites.$where
+            ORDER BY
+                calendar.month ASC, sites.$where ASC");
+        $result = $query->fetchAll(PDO::FETCH_ASSOC);
+        return $result;
+    }
+
+    public function ListByMonths0($table, $where, $where1)
+    {
+        $query = $this->_pdo->query("SELECT
+                DATE_FORMAT($where1, '%Y-%m') AS month,
+                $where,
+                COUNT(*) AS count
+            FROM
+                $table
+            GROUP BY
+                month, $where
+            ORDER BY
+                month ASC, $where ASC");
+        $result = $query->fetchAll(PDO::FETCH_ASSOC);
+        return $result;
+    }
+
+    public function ListByMonths1($table, $where, $where1)
+    {
+        $query = $this->_pdo->query("SELECT
+                DATE_FORMAT(t1.$where1, '%Y-%m') AS month,
+                t1.$where AS site,
+                COUNT(t1.id) AS count_table1,
+                COUNT(t2.id) AS count_table2
+            FROM
+                table1 t1
+            LEFT JOIN
+                table2 t2
+            ON
+                DATE_FORMAT(t1.$where1, '%Y-%m') = DATE_FORMAT(t2.$where1, '%Y-%m')
+                AND t1.$where = t2.$where
+            GROUP BY
+                month, site
+            ORDER BY
+                month ASC, site ASC");
+        $num = $query->rowCount();
+        return $num;
     }
 }

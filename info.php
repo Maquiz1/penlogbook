@@ -300,7 +300,7 @@ if ($user->isLoggedIn()) {
                                                             </div>
                                                             <div class="modal-body">
                                                                 Are you sure you want to delete this Assessment
-                                                                 ?
+                                                                ?
                                                             </div>
                                                             <div class="modal-footer">
                                                                 <input type="hidden" name="id" value="<?= $value['id'] ?>">
@@ -420,11 +420,13 @@ if ($user->isLoggedIn()) {
                                     <thead>
                                         <tr>
                                             <th scope="col">#</th>
-                                            <th scope="col">Visit Date</th>
+                                            <!-- <th scope="col">Visit Date</th> -->
                                             <th scope="col">Mentee Name</th>
                                             <th scope="col">Menter Name</th>
-                                            <th scope="col">PID</th>
-                                            <th scope="col">Site</th>
+                                            <!-- <th scope="col">PID</th> -->
+                                            <!-- <th scope="col">Site</th> -->
+                                            <th scope="col">Disease</th>
+                                            <th scope="col">Competences</th>
                                             <th class="text-center">Action</th>
                                         </tr>
                                     </thead>
@@ -435,20 +437,39 @@ if ($user->isLoggedIn()) {
                                             $mentor = $override->getNews('user', 'status', 1, 'id', $value['mentor'])[0];
                                             $mentee = $override->getNews('user', 'status', 1, 'id', $value['mentee'])[0];
                                             $site = $override->getNews('sites', 'status', 1, 'id', $value['site_id'])[0];
+
+                                            $disease = $override->getNews('category', 'status', 1, 'id', $value['disease'])[0];
+
+                                            $competencies[] = '';
+                                            $competencies = $value['competencies'][0];
+
+                                            print_r($competencies);
+
+                                            // $competencies = $override->getNews('competencies', 'status', 1, 'id', $value['competencies'])[0];
+
+                                            // foreach(){
+                                            // }
+
                                         ?>
                                             <tr>
                                                 <th scope="row"><?= $x; ?></th>
-                                                <td class="table-user">
+                                                <!-- <td class="table-user">
                                                     <?= $value['visit_date']; ?>
-                                                </td>
+                                                </td> -->
                                                 <td class="table-user">
                                                     <?= $mentee['firstname'] . ' - ' . $mentee['lastname']; ?>
                                                 </td>
                                                 <td class="table-user">
                                                     <?= $mentor['firstname'] . ' - ' . $mentor['lastname']; ?>
                                                 </td>
-                                                <td class="table-user">
+                                                <!-- <td class="table-user">
                                                     <?= $value['pids']; ?>
+                                                </td> -->
+                                                <!-- <td class="table-user">
+                                                    <?= $site['name']; ?>
+                                                </td> -->
+                                                <td class="table-user">
+                                                    <?= $disease['name']; ?>
                                                 </td>
                                                 <td class="table-user">
                                                     <?= $site['name']; ?>
@@ -625,17 +646,19 @@ if ($user->isLoggedIn()) {
                                                     <?= $site['name']; ?>
                                                 </td>
                                                 <td class="text-center">
-                                                    <?php if ($user->data()->accessLevel == 1 || $user->data()->accessLevel == 2) { ?>
+                                                    <?php if ($user->data()->accessLevel == 1) { ?>
                                                         <a href="profile.php?id=1&user_id=<?= $value['id'] ?>&disease=<?= $value['disease'] ?>" class="btn btn-info">Update</a>
                                                     <?php } ?>
-                                                    <?php if ($user->data()->accessLevel == 1 || $user->data()->accessLevel == 2 || $user->data()->accessLevel == 3) { ?>
+                                                    <?php if ($user->data()->accessLevel == 1) { ?>
 
                                                         <a href="profile.php?id=1&user_id=<?= $value['id'] ?>&disease=<?= $value['disease'] ?>" class="btn btn-success">View</a>
+
+                                                        <a href="#delete<?= $value['id'] ?>" role="button" class="btn btn-danger" data-toggle="modal">Delete</a>
+
                                                     <?php } ?>
 
                                                     <?php if ($user->data()->accessLevel == 1 || $user->data()->accessLevel == 2) { ?>
-
-                                                        <a href="#delete<?= $value['id'] ?>" role="button" class="btn btn-danger" data-toggle="modal">Delete</a>
+                                                        <a href="info.php?id=5&user_id=<?= $value['id'] ?>" class="btn btn-info">Mentorships</a><br><br>
                                                     <?php } ?>
 
                                                 </td>
@@ -911,6 +934,154 @@ if ($user->isLoggedIn()) {
                         </div>
                     </div>
                 <?php } elseif ($_GET['id'] == 5) { ?>
+                    <div class="col-lg-12 float-none">
+                        <?php if ($user->data()->accessLevel == 1 || $user->data()->accessLevel == 2) { ?>
+                            <hr>
+
+                            <!-- <div> -->
+                            <div class="float-start">
+                                <a href="add.php?id=2&mentorship_id=<?= $_GET['mentorship_id'] ?>&disease=<?= $_GET['disease'] ?>" class="btn btn-info">Add New Assessments</a>
+                            </div>
+                            <div class="float-end">
+                                <a href="mentees.php?id=5&user_id=<?= $_GET['user_id'] ?>" class="btn btn-success">Mentorships</a><br><br>
+                            </div>
+                            <!-- </div> -->
+                            <hr>
+                            <br>
+                        <?php } ?>
+
+                        <?php
+                        $pagNum = 0;
+                        $pagNum = $override->getCount1('logs', 'status', 1, 'mentee', $_GET['user_id']);
+
+                        $pages = ceil($pagNum / $numRec);
+                        if (!$_GET['page'] || $_GET['page'] == 1) {
+                            $page = 0;
+                        } else {
+                            $page = ($_GET['page'] * $numRec) - $numRec;
+                        }
+                        $data = $override->getWithLimit1('logs', 'status', 1, 'mentee', $_GET['user_id'], $page, $numRec);
+
+                        ?>
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Table for <?= $override->getNews('category', 'status', 1, 'id', $_GET['disease'])[0]['name'] ?> Comptences</h5>
+
+                                <!-- Table with stripped rows -->
+                                <table class="table table-bordered table-hover table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Visit Date</th>
+                                            <th scope="col">Mentee Name</th>
+                                            <th scope="col">Menter Name</th>
+                                            <th scope="col">PID</th>
+                                            <th scope="col">Site</th>
+                                            <th class="text-center">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php
+                                        $x = 1;
+                                        foreach ($data as $value) {
+                                            $mentor = $override->getNews('user', 'status', 1, 'id', $value['mentor'])[0];
+                                            $mentee = $override->getNews('user', 'status', 1, 'id', $value['mentee'])[0];
+                                            $site = $override->getNews('sites', 'status', 1, 'id', $value['site_id'])[0];
+                                        ?>
+                                            <tr>
+                                                <th scope="row"><?= $x; ?></th>
+                                                <td class="table-user">
+                                                    <?= $value['visit_date']; ?>
+                                                </td>
+                                                <td class="table-user">
+                                                    <?= $mentee['firstname'] . ' - ' . $mentee['lastname']; ?>
+                                                </td>
+                                                <td class="table-user">
+                                                    <?= $mentor['firstname'] . ' - ' . $mentor['lastname']; ?>
+                                                </td>
+                                                <td class="table-user">
+                                                    <?= $value['pids']; ?>
+                                                </td>
+                                                <td class="table-user">
+                                                    <?= $site['name']; ?>
+                                                </td>
+                                                <td class="text-center">
+                                                    <?php if ($user->data()->accessLevel == 1 || $user->data()->accessLevel == 2) { ?>
+                                                        <a href="add.php?&id=2&mentorship_id=<?= $_GET['mentorship_id'] ?>&disease=<?= $_GET['disease'] ?>&log_id=<?= $value['id'] ?>&disease=<?= $value['disease'] ?>" class="btn btn-info">Update</a>
+                                                    <?php } ?>
+
+                                                    <?php if ($user->data()->accessLevel == 1 || $user->data()->accessLevel == 2 || $user->data()->accessLevel == 3) { ?>
+                                                        <a href="add.php?&id=2&mentorship_id=<?= $_GET['mentorship_id'] ?>&disease=<?= $_GET['disease'] ?>&log_id=<?= $value['id'] ?>&disease=<?= $value['disease'] ?>" class="btn btn-success">View</a>
+                                                    <?php } ?>
+
+                                                    <?php if ($user->data()->accessLevel == 1 || $user->data()->accessLevel == 2) { ?>
+                                                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delete<?= $value['id'] ?>">
+                                                            Delete
+                                                        </button>
+                                                    <?php } ?>
+                                                </td>
+                                            </tr>
+                                            <!-- Basic Modal -->
+                                            <div class="modal fade" id="delete<?= $value['id'] ?>" tabindex="-1">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <form method="POST">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title">Delete</h5>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                Are you sure you want to delete this Assessment ?
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <input type="hidden" name="id" value="<?= $value['id'] ?>">
+                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                                <input type="submit" name="delete_competence" value="Save Changes" class="btn btn-danger btn-block">
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- End Basic Modal-->
+                                        <?php
+                                            $x++;
+                                        }
+                                        ?>
+                                    </tbody>
+                                </table>
+                                <!-- End Table with stripped rows -->
+
+                            </div>
+                        </div>
+                        <div class="card-footer clearfix">
+                            <ul class="pagination pagination-sm m-0 float-right">
+                                <li class="page-item">
+                                    <a class="page-link" href="info.php?id=1&page=<?php if (($_GET['page'] - 1) > 0) {
+                                                                                        echo $_GET['page'] - 1;
+                                                                                    } else {
+                                                                                        echo 1;
+                                                                                    } ?>">&laquo;
+                                    </a>
+                                </li>
+                                <?php for ($i = 1; $i <= $pages; $i++) { ?>
+                                    <li class="page-item">
+                                        <a class="page-link <?php if ($i == $_GET['page']) {
+                                                                echo 'active';
+                                                            } ?>" href="info.php?id=1&page=<?= $i ?>"><?= $i ?>
+                                        </a>
+                                    </li>
+                                <?php } ?>
+                                <li class="page-item">
+                                    <a class="page-link" href="info.php?id=1&page=<?php if (($_GET['page'] + 1) <= $pages) {
+                                                                                        echo $_GET['page'] + 1;
+                                                                                    } else {
+                                                                                        echo $i - 1;
+                                                                                    } ?>">&raquo;
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
                 <?php } elseif ($_GET['id'] == 6) { ?>
                     <div class="col-lg-12">
                         <?php if ($user->data()->accessLevel == 1 || $user->data()->accessLevel == 2) { ?>

@@ -287,15 +287,15 @@ if ($user->isLoggedIn()) {
                         ), $_GET['log_id']);
                         // }
 
-                        foreach (Input::get('date') as $value) {
-                            $user->updateRecord(
-                                'logs',
-                                array(
-                                    'date'  => $value,
-                                ),
-                                $_GET['log_id']
-                            );
-                        }
+                        // foreach (Input::get('date') as $value) {
+                        //     $user->updateRecord(
+                        //         'logs',
+                        //         array(
+                        //             'date'  => $value,
+                        //         ),
+                        //         $_GET['log_id']
+                        //     );
+                        // }
 
                         // foreach (Input::get('date2') as $value) {
                         //     $user->updateRecord(
